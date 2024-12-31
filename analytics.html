@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics</title>
+  <script defer src="dashboard.html"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@48,400,0,0" />
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+   <div class="container">
+      <aside>
+         <div class="top">
+           <div class="logo">
+             <h2><img src="logo.png"><span class="danger">FAMBUDGET</span></h2>
+           </div>
+           <div class="close" id="close_btn">
+            <span class="material-symbols-sharp">close</span>
+           </div>
+         </div>
+         
+          <div class="sidebar">
+            <a href="dashboard.html" class="sideoptions">
+              <span class="material-symbols-sharp">grid_view </span>
+              <h3>Main Page</h3>
+           </a>
+           <a href="family.html" class="sideoptions">
+              <span class="material-symbols-sharp">person_outline </span>
+              <h3>Family</h3>
+           </a>
+           <a href="analytics.html" class="sideoptions">
+              <span class="material-symbols-sharp">insights </span>
+              <h3>Analytics</h3>
+           </a>
+         
+           <a href="Approaching.html" class="sideoptions">
+            <span class="material-symbols-sharp">report_gmailerrorred </span>
+            <h3>Notifications</h3>
+         </a>
+           <a href="settings.html" class="sideoptions">
+              <span class="material-symbols-sharp">settings </span>
+              <h3>settings</h3>
+           </a>
+           <a href="profile.html" class="sideoptions">
+            <span class="material-symbols-sharp">person</span>
+            <h3>Profile</h3>
+           </a>
+            <a href="#" onclick="confirmLogout(event)">
+              <span class="material-symbols-sharp">logout</span>
+              <h3>Logout</h3>
+            </a>
+            <script>
+              function confirmLogout(event) {
+                event.preventDefault(); // Prevent default action
+                if (confirm("Are you sure you want to log out?")) {
+                  window.location.href = "logout.php"; // Redirect to logout.php
+                }
+              }
+            </script>
+          </div>
+      </aside>
+
+      <main>
+        <h1>Analytics</h1>
+        <div class="date">
+          <input type="date">
+        </div>
+
+        <div class="analyticsC">
+            <!-- Total Spendings Chart -->
+            <div class="Income">
+                <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
+            </div>
+            
+            <!-- Total Savings Chart -->
+            <div class="spendings">
+                <canvas id="myChart2" style="width:100%;max-width:700px"></canvas>
+            </div>
+
+            <!-- Spendings by Category Chart -->
+            <div class="spendings">
+                <canvas id="myChart3" style="width:100%;max-width:700px"></canvas>
+            </div>
+
+            <!-- Custom Line Chart -->
+            <div class="spendings">
+                <canvas id="myChart4" style="width:100%;max-width:700px"></canvas>
+            </div>
+
+            <!-- Multiple Data Lines -->
+            <div class="spendings">
+                <canvas id="myChart5" style="width:100%;max-width:600px"></canvas>
+            </div>
+        </div>
+    </main>
+  </div>
+
+  <script>
+    // Fetch data from the backend (analytics_data.php)
+    fetch('analytics_data.php')
+        .then(response => response.json())
+        .then(data => {
+            // Data for the bar chart (Total Spendings per month)
+            const xValues = ["Jan", "Feb", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            const yValuesSpendings = Array(12).fill(0); // Initialize array with 0 for each month
+
+            // Fill yValues with data from the API response
+            for (let month = 1; month <= 12; month++) {
+                if (data.spendings[month]) {
+                    yValuesSpendings[month - 1] = data.spendings[month];
+                }
+            }
+
+            // Bar chart for total spendings
+            new Chart("myChart", {
+                type: "bar",
+                data: {
+                    labels: xValues,
+                    datasets: [{
+                        backgroundColor: "#567878",
+                        data: yValuesSpendings
+                    }]
+                },
+                options: {
+                    legend: {display: false},
+                    title: {
+                        display: true,
+                        text: "Total Spendings Monthly This Year"
+                    }
+                }
+            });
+
+            // Data for the line chart (Total Savings per month)
+            const yValuesSavings = Array(12).fill(0); // Initialize array with 0 for each month
+
+            for (let month = 1; month <= 12; month++) {
+                if (data.savings[month]) {
+                    yValuesSavings[month - 1] = data.savings[month];
+                }
+            }
+
+            // Line chart for total savings
+            new Chart("myChart2", {
+                type: "line",
+                data: {
+                    labels: xValues,
+                    datasets: [{
+                        backgroundColor: "#567878",
+                        data: yValuesSavings
+                    }]
+                },
+                options: {
+                    legend: {display: false},
+                    title: {
+                        display: true,
+                        text: "Total Savings Monthly This Year"
+                    }
+                }
+            });
+
+            // Data for the pie chart (Spendings by category)
+            const categories = Object.keys(data.categories);
+            const yValuesCategories = categories.map(category => data.categories[category]);
+            const barColors = ["red", "green", "blue", "orange", "brown"]; // You can customize this
+
+            // Pie chart for spendings by category
+            new Chart("myChart3", {
+                type: "pie",
+                data: {
+                    labels: categories,
+                    datasets: [{
+                        backgroundColor: barColors,
+                        data: yValuesCategories
+                    }]
+                },
+                options: {
+                    title: {
+                        display: true,
+                        text: "Spendings by Category"
+                    }
+                }
+            });
+
+            // Optional custom line chart (replace with your data)
+            const xValuesCustom = [50,60,70,80,90,100,110,120,130,140,150];
+            const yValuesCustom = [7,8,8,9,9,9,10,11,14,14,15];
+
+            new Chart("myChart4", {
+                type: "line",
+                data: {
+                    labels: xValuesCustom,
+                    datasets: [{
+                        fill: false,
+                        lineTension: 0,
+                        backgroundColor: "rgba(0,0,255,1.0)",
+                        borderColor: "rgba(0,0,255,0.1)",
+                        data: yValuesCustom
+                    }]
+                },
+                options: {
+                    legend: {display: false},
+                    scales: {
+                        yAxes: [{ticks: {min: 6, max:16}}]
+                    }
+                }
+            });
+
+            // Multiple data lines
+            new Chart("myChart5", {
+                type: "line",
+                data: {
+                    labels: [100,200,300,400,500,600,700,800,900,1000],
+                    datasets: [
+                        {
+                            data: [860,1140,1060,1060,1070,1110,1330,2210,7830,2478],
+                            borderColor: "red",
+                            fill: false
+                        },
+                        {
+                            data: [1600,1700,1700,1900,2000,2700,4000,5000,6000,7000],
+                            borderColor: "green",
+                            fill: false
+                        },
+                        {
+                            data: [300,700,2000,5000,6000,4000,2000,1000,200,100],
+                            borderColor: "blue",
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    legend: {display: false}
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+  </script>
+
+</body>
+</html>

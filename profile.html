@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <script defer src="dashboard.js"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@48,400,0,0" />
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+   <div class="container">
+      <aside>
+         <div class="top">
+           <div class="logo">
+             <h2><img src="logo1" alt="Logo"><span class="danger">FAMBUDGET</span> </h2>
+           </div>
+           <div class="close" id="close_btn">
+            <span class="material-symbols-sharp">close</span>
+           </div>
+         </div>
+         
+         <div class="sidebar">
+
+          <a href="dashboard.html" class="sideoptions">
+            <span class="material-symbols-sharp">grid_view </span>
+            <h3>Main Page</h3>
+         </a>
+         <a href="family.html" class="sideoptions">
+            <span class="material-symbols-sharp">person_outline </span>
+            <h3>Family</h3>
+         </a>
+         <a href="analytics.html" class="sideoptions">
+            <span class="material-symbols-sharp">insights </span>
+            <h3>Analytics</h3>
+         </a>
+        
+      
+         <a href="Approaching.html" class="sideoptions">
+          <span class="material-symbols-sharp">report_gmailerrorred </span>
+          <h3>Notifications</h3>
+       </a>
+         <a href="settings.html" class="sideoptions">
+            <span class="material-symbols-sharp">settings </span>
+            <h3>settings</h3>
+         </a>
+         <a href="profile.html" class="sideoptions">
+          <span class="material-symbols-sharp">person</span>
+          <h3>Profile</h3>
+         </a>
+          
+        <a href="#" onclick="confirmLogout(event)">
+          <span class="material-symbols-sharp">logout</span>
+          <h3>Logout</h3>
+        </a>
+        
+        <script>
+          function confirmLogout(event) {
+            event.preventDefault(); // Prevent default action
+            if (confirm("Are you sure you want to log out?")) {
+              window.location.href = "logout.php"; // Redirect to logout.php
+            }
+          }
+        </script>
+           
+
+
+        </div>
+      </aside>
+
+    <!-- Main Content -->
+    <main>
+      <h1>Profile Settings</h1>
+      <div class="profile-settings">
+
+        <!-- Display User Information -->
+        <div class="user-info">
+          <h2>User Information</h2>
+          <div class="info">
+            <p><strong>Name:</strong> <span id="userName">Loading...</span></p>
+            <p><strong>Email:</strong> <span id="userEmail">Loading...</span></p>
+            <p><strong>Phone Number:</strong> <span id="userPhone">Loading...</span></p>
+          </div>
+        </div>
+
+        <!-- Change Password Section -->
+        <div class="change-password">
+          <h2>Change Password</h2>
+          <form id="changePasswordForm">
+            <label for="current-password">Current Password:</label>
+            <input type="password" id="current-password" name="current-password" required>
+
+            <label for="new-password">New Password:</label>
+            <input type="password" id="new-password" name="new-password" required>
+
+            <label for="confirm-password">Confirm New Password:</label>
+            <input type="password" id="confirm-password" name="confirm-password" required>
+
+            <button type="submit" class="submit-btn">Change Password</button>
+          </form>
+        </div>
+
+        <!-- Add New Family Member -->
+        <div class="add-family-member">
+          <h2>Add Family Member</h2>
+          <form id="addFamilyForm">
+            <label for="family-member-name">Family Member Name:</label>
+            <input type="text" id="family-member-name" name="family-member-name" required>
+
+            <label for="family-member-email">Family Member Email:</label>
+            <input type="email" id="family-member-email" name="family-member-email" required>
+
+            <button type="submit" class="submit-btn">Add Family Member</button>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Fetch user data on page load
+    window.onload = function() {
+      fetchUserData();
+    }
+
+    function fetchUserData() {
+      // Make an AJAX request to get user data
+      fetch('get_user_info.php')
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') {
+            // Display user information in the profile
+            document.getElementById('userName').innerText = data.name;
+            document.getElementById('userEmail').innerText = data.email;
+            document.getElementById('userPhone').innerText = data.phone || 'N/A';
+          } else {
+            // Handle error (e.g., user not logged in)
+            alert(data.message);
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching user data:', error);
+          alert('Failed to load user data.');
+        });
+    }
+  </script>
+</body>
+</html>
